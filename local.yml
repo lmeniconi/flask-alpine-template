@@ -1,0 +1,29 @@
+version: "3"
+
+volumes:
+  local_mariadb_data: {}
+
+services:
+  flask:
+    build:
+      context: .
+      dockerfile: ./compose/local/Dockerfile
+    image: app_local_flask
+    depends_on:
+      - mariadb
+    volumes:
+      - .:/app
+    env_file:
+      - ./.envs/.local/.flask
+      - ./.envs/.local/.mariadb
+    ports:
+      - "8080:8080"
+    command: /start
+
+  mariadb:
+    image: mariadb
+    restart: always
+    volumes:
+      - local_mariadb_data:/var/lib/mysql
+    env_file:
+      - ./.envs/.local/.mariadb
